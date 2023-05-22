@@ -21,6 +21,18 @@ public class Pet {
     private LocalDate birthDate;
     private String notes;
 
+    public Pet() {
+    }
+
+    public Pet(long id, PetType type, String name, Customer customer, LocalDate birthDate, String notes) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+        this.customer = customer;
+        this.birthDate = birthDate;
+        this.notes = notes;
+    }
+
     public long getId() {
         return id;
     }

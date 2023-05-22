@@ -22,6 +22,16 @@ public class Employee {
     @Enumerated(EnumType.STRING)
     private Set<DayOfWeek> daysAvailable;
 
+    public Employee() {
+    }
+
+    public Employee(long id, String name, Set<EmployeeSkill> skills, Set<DayOfWeek> daysAvailable) {
+        this.id = id;
+        this.name = name;
+        this.skills = skills;
+        this.daysAvailable = daysAvailable;
+    }
+
     public long getId() {
         return id;
     }
