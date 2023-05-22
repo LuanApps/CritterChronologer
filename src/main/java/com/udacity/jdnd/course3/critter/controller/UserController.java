@@ -3,11 +3,15 @@ package com.udacity.jdnd.course3.critter.controller;
 import com.udacity.jdnd.course3.critter.dto.CustomerDTO;
 import com.udacity.jdnd.course3.critter.dto.EmployeeDTO;
 import com.udacity.jdnd.course3.critter.dto.EmployeeRequestDTO;
+import com.udacity.jdnd.course3.critter.entity.Customer;
+import com.udacity.jdnd.course3.critter.service.CustomerService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Handles web requests related to Users.
@@ -19,14 +23,32 @@ import java.util.Set;
 @RequestMapping("/user")
 public class UserController {
 
+    private CustomerService customerService;
+
+    public UserController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
-        throw new UnsupportedOperationException();
+        Customer customer = new Customer();
+        customer.setName(customerDTO.getName());
+        customer.setPhoneNumber(customerDTO.getPhoneNumber());
+        customer.setNotes(customerDTO.getNotes());
+
+        customerService.saveCustomer(customer);
+
+        return convertCustomerToCustomerDTO(customer);
+//        throw new UnsupportedOperationException();
     }
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers(){
-        throw new UnsupportedOperationException();
+        List<Customer> list = customerService.getAllCustomers();
+        return list.stream()
+                .map(customer -> convertCustomerToCustomerDTO(customer))
+                .collect(Collectors.toList());
+//        throw new UnsupportedOperationException();
     }
 
     @GetMapping("/customer/pet/{petId}")
@@ -52,6 +74,12 @@ public class UserController {
     @GetMapping("/employee/availability")
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
         throw new UnsupportedOperationException();
+    }
+
+    private CustomerDTO convertCustomerToCustomerDTO(Customer customer){
+        CustomerDTO customerDTO = new CustomerDTO();
+        BeanUtils.copyProperties(customer, customerDTO);
+        return customerDTO;
     }
 
 }
