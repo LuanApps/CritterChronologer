@@ -32,7 +32,7 @@ public class PetController {
         Pet pet = petService.getPetById(petDTO.getId())
                         .orElseGet(Pet::new);
         BeanUtils.copyProperties(petDTO, pet, "id");
-        petService.savePet(pet, petDTO.getOwnerId());
+        pet = petService.savePet(pet, petDTO.getOwnerId());
 
         PetDTO updatedPet = convertPetToPetDTO(pet);
         updatedPet.setOwnerId(pet.getCustomer().getId());

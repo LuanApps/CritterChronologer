@@ -6,6 +6,7 @@ import com.udacity.jdnd.course3.critter.dto.EmployeeRequestDTO;
 import com.udacity.jdnd.course3.critter.entity.Customer;
 import com.udacity.jdnd.course3.critter.entity.Employee;
 import com.udacity.jdnd.course3.critter.entity.Pet;
+import com.udacity.jdnd.course3.critter.model.EmployeeSkill;
 import com.udacity.jdnd.course3.critter.service.CustomerService;
 import com.udacity.jdnd.course3.critter.service.EmployeeService;
 import com.udacity.jdnd.course3.critter.service.PetService;
@@ -13,10 +14,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -43,9 +42,9 @@ public class UserController {
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
         Customer customer = customerService.getCustomerById(customerDTO.getId())
                 .orElseGet(Customer::new);
-        BeanUtils.copyProperties(customer, customerDTO, "id");
+        BeanUtils.copyProperties(customerDTO, customer, "id");
         List<Long> pets = Optional.ofNullable(customerDTO.getPetIds()).orElseGet(ArrayList::new);
-        customerService.saveCustomer(customer, pets);
+        customer = customerService.saveCustomer(customer, pets);
 
         return convertCustomerToCustomerDTO(customer);
 //        throw new UnsupportedOperationException();
@@ -71,13 +70,12 @@ public class UserController {
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
         Employee employee = employeeService.getEmployeeById(employeeDTO.getId())
                         .orElseGet(Employee::new);
-        BeanUtils.copyProperties(employee, employeeDTO, "id");
-
-        employeeService.saveEmployee(employee);
+        BeanUtils.copyProperties(employeeDTO, employee, "id");
+        employee = employeeService.saveEmployee(employee);
         return convertEmployeeToEmployeeDTO(employee);
     }
 
-    @PostMapping("/employee/{employeeId}")
+    @GetMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
         Employee employee = employeeService.getEmployeeById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Could not find an employee with id: " + employeeId));
@@ -87,13 +85,23 @@ public class UserController {
 
     @PutMapping("/employee/{employeeId}")
     public void setAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable long employeeId) {
-        throw new UnsupportedOperationException();
+        Employee employee = employeeService.getEmployeeById(employeeId).orElseThrow(() -> new RuntimeException("Could not find an employee with id: " + employeeId));
+        if(employee.getDaysAvailable() != null && employee.getDaysAvailable().size() > 0){
+            employee.getDaysAvailable().clear();
+        }
+        employee.setDaysAvailable(daysAvailable);
     }
 
     @GetMapping("/employee/availability")
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
-        throw new UnsupportedOperationException();
-    }
+        Set<EmployeeSkill> requiredSkills = employeeDTO.getSkills();
+        LocalDate requiredDate = employeeDTO.getDate();
+        List<Employee> availableEmployees = employeeService.findEmployeesForService(requiredSkills, requiredDate);
+
+        return availableEmployees.stream()
+                .map(this::convertEmployeeToEmployeeDTO)
+                .collect(Collectors.toList());
+       }
 
     private CustomerDTO convertCustomerToCustomerDTO(Customer customer){
         CustomerDTO customerDTO = new CustomerDTO();

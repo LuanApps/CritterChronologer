@@ -7,19 +7,27 @@ import java.time.DayOfWeek;
 import java.util.Set;
 
 @Entity
+@Table(name="employee")
 public class Employee {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String name;
 
     @ElementCollection
-    @Enumerated(EnumType.STRING)
+    @Column(name="skill")
+    @CollectionTable(
+            name="employee_skill",
+            joinColumns = @JoinColumn(name="id"), uniqueConstraints = @UniqueConstraint(columnNames = {"ID", "SKILL"}))
     private Set<EmployeeSkill> skills;
 
     @ElementCollection
-    @Enumerated(EnumType.STRING)
+    @Column(name="days_available")
+    @CollectionTable(
+            name="day_of_week",
+            joinColumns = @JoinColumn(name="id"), uniqueConstraints = @UniqueConstraint(columnNames = {"ID", "DAYS_AVAILABLE"}))
+
     private Set<DayOfWeek> daysAvailable;
 
     public Employee() {
