@@ -4,7 +4,9 @@ import com.udacity.jdnd.course3.critter.dto.CustomerDTO;
 import com.udacity.jdnd.course3.critter.dto.EmployeeDTO;
 import com.udacity.jdnd.course3.critter.dto.EmployeeRequestDTO;
 import com.udacity.jdnd.course3.critter.entity.Customer;
+import com.udacity.jdnd.course3.critter.entity.Employee;
 import com.udacity.jdnd.course3.critter.service.CustomerService;
+import com.udacity.jdnd.course3.critter.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +26,11 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private CustomerService customerService;
+    private EmployeeService employeeService;
 
-    public UserController(CustomerService customerService) {
+    public UserController(CustomerService customerService, EmployeeService employeeService) {
         this.customerService = customerService;
+        this.employeeService = employeeService;
     }
 
     @PostMapping("/customer")
@@ -58,12 +62,21 @@ public class UserController {
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        throw new UnsupportedOperationException();
+        Employee employee = new Employee();
+        employee.setName(employeeDTO.getName());
+        employee.setSkills(employeeDTO.getSkills());
+        employee.setDaysAvailable(employeeDTO.getDaysAvailable());
+
+        employeeService.saveEmployee(employee);
+        return convertEmployeeToEmployeeDTO(employee);
+//        throw new UnsupportedOperationException();
     }
 
     @PostMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
-        throw new UnsupportedOperationException();
+        Employee employee = employeeService.getEmployeeById(employeeId);
+        return convertEmployeeToEmployeeDTO(employee);
+//        throw new UnsupportedOperationException();
     }
 
     @PutMapping("/employee/{employeeId}")
@@ -80,6 +93,12 @@ public class UserController {
         CustomerDTO customerDTO = new CustomerDTO();
         BeanUtils.copyProperties(customer, customerDTO);
         return customerDTO;
+    }
+
+    private EmployeeDTO convertEmployeeToEmployeeDTO(Employee employee){
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        BeanUtils.copyProperties(employee, employeeDTO);
+        return employeeDTO;
     }
 
 }
