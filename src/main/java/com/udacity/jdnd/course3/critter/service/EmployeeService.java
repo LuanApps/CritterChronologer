@@ -5,6 +5,7 @@ import com.udacity.jdnd.course3.critter.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeService {
@@ -23,8 +24,8 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee getEmployeeById(Long id){
-        return employeeRepository.getOne(id);
+    public Optional<Employee> getEmployeeById(Long id){
+        return employeeRepository.findById(id);
     }
 
 }
