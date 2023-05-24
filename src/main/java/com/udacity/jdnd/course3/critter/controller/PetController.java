@@ -50,7 +50,7 @@ public class PetController {
     }
 
     @GetMapping
-    public List<PetDTO> getPets(){
+    public List<PetDTO> getAllPets(){
         return petService.getAllPets().stream()
                 .map(pet -> convertPetToPetDTO(pet))
                 .collect(Collectors.toList());

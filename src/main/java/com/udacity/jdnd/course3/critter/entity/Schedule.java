@@ -15,15 +15,25 @@ public class Schedule {
     private long id;
 
     @ManyToMany(targetEntity = Employee.class)
+    @JoinTable(name = "schedule_employee",
+            joinColumns = @JoinColumn(name = "schedule_id"),
+            inverseJoinColumns = @JoinColumn(name = "employee_id"))
     private List<Employee> employees;
 
     @ManyToMany(targetEntity = Pet.class)
+    @JoinTable(name = "schedule_pet",
+            joinColumns = @JoinColumn(name = "schedule_id"),
+            inverseJoinColumns = @JoinColumn(name = "pet_id"))
     private List<Pet> pets;
 
     private LocalDate date;
 
     @ElementCollection
     @Enumerated(EnumType.STRING)
+    @CollectionTable(
+            name="schedule_activities",
+            joinColumns = @JoinColumn(name="id"))
+    @Column(name="activities")
     private Set<EmployeeSkill> activities;
 
     public Schedule() {

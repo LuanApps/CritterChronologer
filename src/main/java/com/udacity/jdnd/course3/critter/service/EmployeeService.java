@@ -28,8 +28,8 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    public List<Employee> getAllEmployees(){
-        return employeeRepository.findAll();
+    public List<Employee> getAllById(List<Long> ids){
+        return employeeRepository.findAllById(ids);
     }
 
     public Optional<Employee> getEmployeeById(Long id){
