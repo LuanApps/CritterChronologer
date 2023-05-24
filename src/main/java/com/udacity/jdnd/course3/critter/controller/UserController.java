@@ -86,10 +86,8 @@ public class UserController {
     @PutMapping("/employee/{employeeId}")
     public void setAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable long employeeId) {
         Employee employee = employeeService.getEmployeeById(employeeId).orElseThrow(() -> new RuntimeException("Could not find an employee with id: " + employeeId));
-        if(employee.getDaysAvailable() != null && employee.getDaysAvailable().size() > 0){
-            employee.getDaysAvailable().clear();
-        }
         employee.setDaysAvailable(daysAvailable);
+        employeeService.saveEmployee(employee);
     }
 
     @GetMapping("/employee/availability")
