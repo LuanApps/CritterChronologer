@@ -6,10 +6,12 @@ import com.udacity.jdnd.course3.critter.repository.CustomerRepository;
 import com.udacity.jdnd.course3.critter.repository.PetRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class PetService {
 
     private PetRepository petRepository;
@@ -19,7 +21,6 @@ public class PetService {
         this.petRepository = petRepository;
         this.customerRepository = customerRepository;
     }
-
     public Pet savePet(Pet pet, long ownerId){
         Customer customer = customerRepository.findById(ownerId).orElseThrow(() -> new IllegalArgumentException("Invalid owner ID"));
         pet.setCustomer(customer);

@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ScheduleService {
 
     private ScheduleRepository scheduleRepository;
@@ -21,7 +22,6 @@ public class ScheduleService {
         this.customerRepository = customerRepository;
     }
 
-    @Transactional
     public Schedule saveSchedule(Schedule schedule) {
         return scheduleRepository.save(schedule);
     }
